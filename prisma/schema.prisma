@@ -1,0 +1,23 @@
+// This file configures Prisma. Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Veículo cadastrado para monitoramento e controle operacional.
+model Vehicle {
+  id        String   @id @default(cuid())
+  plate     String   @unique
+  brand     String
+  model     String
+  year      Int
+  odometer  Int?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
