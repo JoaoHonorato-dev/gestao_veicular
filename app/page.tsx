@@ -1,4 +1,5 @@
-export default function HomePage() {
+
+export default function PagePrincipal() {
   return (
     <div className="space-y-8">
       <section className="rounded-2xl border border-neutral-200 bg-white p-8 shadow-sm dark:border-neutral-800 dark:bg-neutral-950">

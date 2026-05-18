@@ -1,0 +1,30 @@
+
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.inputLogin{
+    margin-bottom: 6%;
+    color: black;
+    border-radius: 10;
+}
+
+.remember-me{
+    color: white;
+}
+.forgot-password{
+    font-size: small;
+}
+.btn-success{
+    background-color: #00add4;
+    border-radius: 20;
+}
