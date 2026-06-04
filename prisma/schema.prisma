@@ -1,4 +1,4 @@
-// This file configures Prisma. Learn more: https://pris.ly/d/prisma-schema
+// Configuração do Prisma — gera o cliente TypeScript a partir deste arquivo.
 
 generator client {
   provider = "prisma-client-js"
@@ -9,20 +9,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// Veículo cadastrado para monitoramento e controle operacional.
-model Vehicle {
-  id        Int      @id @default(autoincrement())
-  plate     String   @unique
-  brand     String
-  model     String
-  year      Int
-  odometer  Int?
-  notes     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+/// Status de rastreamento do veículo (online = com sinal, offline = sem sinal).
+enum VehicleStatus {
+  ONLINE
+  OFFLINE
 }
 
-//Inserção de tabela de usuario para controle e login no sistema
+/// Veículo cadastrado no sistema (campos do CRUD).
+model Vehicle {
+  id        Int           @id @default(autoincrement())
+  plate     String        @unique // placa — única no banco
+  model     String                 // modelo do veículo
+  driver    String                 // nome do motorista
+  status    VehicleStatus @default(OFFLINE)
+  createdAt DateTime      @default(now())
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   name      String

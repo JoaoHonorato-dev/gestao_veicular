@@ -1,7 +1,13 @@
 import type { User } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
-import { responseCookiesToRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
+
+export const TEST_USER = {
+  id: 0,
+  name: "Usuário Teste Cursor",
+  email: "teste_cursor@tete",
+  password: "123",
+} as const;
 /**
  * Camada de serviço para operações de veículos.
  * Centraliza acesso ao Prisma e regras simples de persistência.
@@ -21,27 +27,51 @@ type LoginInput = {
   };
   
 export async function loginUser(data: LoginInput) {
-    console.log("SERVICE");
-    const user = await prisma.user.findUnique({ where: { email: data.email } });
-    let request_response:any;
-    
-    if(!user){
-        request_response = {
-            success: false,
-            message: "Email de usuário não encontrado"
-        }
-    }else if( user.password !== data.password){
-        request_response = {
-            success: false,
-            message: "Senha incorreta"
-        }
+  if (
+    data.email === TEST_USER.email &&
+    data.password === TEST_USER.password
+  ) {
+    const { password: _, ...userWithoutPassword } = TEST_USER;
+    return {
+      success: true,
+      data: {
+        ...userWithoutPassword,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      message: "Login realizado com usuário de teste.",
+    };
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email: data.email },
+    });
+
+    if (!user) {
+      return {
+        success: false,
+        message: "Email de usuário não encontrado",
+      };
     }
-    else{
-        request_response = {
-            success: true,
-            data: user,
-            message: "Usuário encontrado, senha correta!"
-        }
+
+    if (user.password !== data.password) {
+      return {
+        success: false,
+        message: "Senha incorreta",
+      };
     }
-    return request_response;
+
+    const { password: _, ...userWithoutPassword } = user;
+    return {
+      success: true,
+      data: userWithoutPassword,
+      message: "Usuário encontrado, senha correta!",
+    };
+  } catch {
+    return {
+      success: false,
+      message: "Erro ao conectar com o banco de dados. Use o usuário de teste.",
+    };
+  }
 }

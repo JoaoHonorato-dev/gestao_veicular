@@ -1,85 +1,62 @@
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+import { PageLoader } from "@/components/ui/page-loader";
+import { getSessionUser, type SessionUser } from "@/lib/auth";
 
 export default function PagePrincipal() {
+  const router = useRouter();
+  const [user, setUser] = useState<SessionUser | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const session = getSessionUser();
+    if (!session) {
+      router.replace("/login");
+      return;
+    }
+    setUser(session);
+    setLoading(false);
+  }, [router]);
+
+  if (loading || !user) {
+    return <PageLoader label="Validando usuário..." />;
+  }
+
   return (
-    <div className="space-y-8">
-      <section className="rounded-2xl border border-neutral-200 bg-white p-8 shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
-        <p className="text-sm font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-          Sistema
+    <div className="flex min-h-[60vh] flex-col items-center justify-center">
+      <section className="w-full max-w-lg rounded-2xl border border-neutral-200 bg-white p-10 text-center shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
+        <p className="text-sm font-medium uppercase tracking-wide text-sky-600 dark:text-sky-400">
+          Bem-vindo
         </p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
-          Gestão de veículos
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
+          Olá, {user.name}
         </h1>
-        <p className="mt-4 max-w-2xl text-neutral-600 dark:text-neutral-300">
-          Base Next.js (App Router) com TypeScript, Tailwind CSS, Prisma e
-          PostgreSQL. Estrutura preparada para evoluir módulos de frota,
-          manutenção e telemetria.
+        <p className="mt-3 text-neutral-600 dark:text-neutral-400">
+          Acesse o painel de rastreamento para acompanhar a frota em tempo real.
         </p>
-      </section>
 
-      <section className="grid gap-4 sm:grid-cols-2">
-        <article className="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-950">
-          <h2 className="text-lg font-medium text-neutral-900 dark:text-neutral-50">
-            Pastas
-          </h2>
-          <ul className="mt-3 list-inside list-disc space-y-1 text-sm text-neutral-600 dark:text-neutral-300">
-            <li>
-              <code className="rounded bg-neutral-100 px-1 py-0.5 text-neutral-800 dark:bg-neutral-900 dark:text-neutral-200">
-                app/
-              </code>{" "}
-              — rotas e layouts
-            </li>
-            <li>
-              <code className="rounded bg-neutral-100 px-1 py-0.5 text-neutral-800 dark:bg-neutral-900 dark:text-neutral-200">
-                components/
-              </code>{" "}
-              — UI reutilizável
-            </li>
-            <li>
-              <code className="rounded bg-neutral-100 px-1 py-0.5 text-neutral-800 dark:bg-neutral-900 dark:text-neutral-200">
-                lib/
-              </code>{" "}
-              — cliente Prisma, utilitários
-            </li>
-            <li>
-              <code className="rounded bg-neutral-100 px-1 py-0.5 text-neutral-800 dark:bg-neutral-900 dark:text-neutral-200">
-                services/
-              </code>{" "}
-              — regras e persistência
-            </li>
-            <li>
-              <code className="rounded bg-neutral-100 px-1 py-0.5 text-neutral-800 dark:bg-neutral-900 dark:text-neutral-200">
-                types/
-              </code>{" "}
-              — DTOs e tipos de domínio
-            </li>
-            <li>
-              <code className="rounded bg-neutral-100 px-1 py-0.5 text-neutral-800 dark:bg-neutral-900 dark:text-neutral-200">
-                prisma/
-              </code>{" "}
-              — schema e migrações
-            </li>
-          </ul>
-        </article>
+        <Link
+          href="/dashboard"
+          className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-sky-500 px-6 py-3.5 text-sm font-semibold text-white shadow-md shadow-sky-500/25 transition hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-950"
+        >
+          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+            />
+          </svg>
+          Abrir dashboard de rastreamento
+        </Link>
 
-        <article className="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-950">
-          <h2 className="text-lg font-medium text-neutral-900 dark:text-neutral-50">
-            Próximos passos
-          </h2>
-          <ol className="mt-3 list-inside list-decimal space-y-2 text-sm text-neutral-600 dark:text-neutral-300">
-            <li>Copie <span className="font-mono">.env.example</span> para{" "}
-              <span className="font-mono">.env</span> e configure o PostgreSQL.
-            </li>
-            <li>
-              Execute <span className="font-mono">npm install</span> e{" "}
-              <span className="font-mono">npx prisma migrate dev</span> (ou{" "}
-              <span className="font-mono">db push</span> em ambiente local).
-            </li>
-            <li>
-              Rode <span className="font-mono">npm run dev</span> e comece as
-              rotas em <span className="font-mono">app/</span>.
-            </li>
-          </ol>
-        </article>
+        <p className="mt-4 text-xs text-neutral-500">
+          Logado como {user.email}
+        </p>
       </section>
     </div>
   );
